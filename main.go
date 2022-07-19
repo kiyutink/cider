@@ -42,5 +42,5 @@ func main() {
 	start := addr & mask
 	end := start + ^mask
 
-	fmt.Println(uint32ToIP(start), uint32ToIP(end))
+	fmt.Printf("start: %v\nend:   %v\n", uint32ToIP(start), uint32ToIP(end))
 }
