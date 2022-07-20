@@ -4,85 +4,36 @@ import (
 	"testing"
 )
 
-func TestUint32ToIP(t *testing.T) {
+func TestMostSignificant(t *testing.T) {
 	tt := []struct {
-		expected string
-		integer  uint32
+		n        int
+		expected uint32
 	}{
-		{
-			"255.255.255.255",
-			4294967295,
-		},
-		{
-			"27.13.101.56",
-			453862712,
-		},
-		{
-			"0.0.0.0",
-			0,
-		},
+		{0, 0},
+		{1, 2147483648},
 	}
 
 	for _, test := range tt {
-		if uint32ToIP(test.integer) != test.expected {
-			t.Errorf("expected %v to convert to ip %v, instead got %v",
-				test.integer, test.expected, uint32ToIP(test.integer))
+		if v := mostSignificant(test.n); v != test.expected {
+			t.Errorf("expected %v most significant bits to be equal to %v, instead got %v", test.n, test.expected, v)
 		}
 	}
 }
 
-func TestIPToUint32(t *testing.T) {
+func TestLeastSignificant(t *testing.T) {
 	tt := []struct {
-		ip       string
+		n        int
 		expected uint32
-		invalid  bool
 	}{
-		{
-			"255.255.255.255",
-			4294967295,
-			false,
-		},
-		{
-			"27.13.101.56",
-			453862712,
-			false,
-		},
-		{
-			"0.0.0.0",
-			0,
-			false,
-		},
-		{
-			"",
-			0,
-			true,
-		},
-		{
-			"1.1.1",
-			0,
-			true,
-		},
-		{
-			"a.b.c.d",
-			0,
-			true,
-		},
+		{0, 0},
+		{1, 1},
+		{4, 15},
+		{10, 1023},
 	}
 
 	for _, test := range tt {
-		n, err := ipToUint32(test.ip)
-
-		if err != nil && !test.invalid {
-			t.Errorf("expected no error")
-		}
-
-		if err == nil && test.invalid {
-			t.Errorf("expected an error")
-		}
-
-		if n != test.expected {
-			t.Errorf("expected %v to convert to ip %v, instead got %v",
-				test.ip, test.expected, n)
+		if v := leastSignificant(test.n); v != test.expected {
+			t.Errorf("expected %v least significant bits to be equal to %v, instead got %v", test.n, test.expected, v)
 		}
 	}
 }
