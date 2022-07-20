@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"flag"
 	"fmt"
 	"os"
 	"strconv"
@@ -9,12 +10,15 @@ import (
 )
 
 func main() {
+	list := flag.Bool("l", false, "list all the ip addresses instead of only start and end of the block")
+	flag.Parse()
+
 	if len(os.Args) < 2 {
 		fmt.Fprintln(os.Stderr, errors.New("invalid CIDR"))
 		os.Exit(1)
 	}
 
-	cidr := os.Args[1]
+	cidr := flag.Args()[0]
 
 	parts := strings.Split(cidr, "/")
 
@@ -42,5 +46,15 @@ func main() {
 	start := addr & mask
 	end := start + ^mask
 
-	fmt.Printf("start: %v\nend:   %v\n", uint32ToIP(start), uint32ToIP(end))
+	if *list {
+		for addr := start; addr <= end; addr++ {
+			fmt.Println(uint32ToIP(addr))
+			if addr == ^uint32(0) {
+				break
+			}
+		}
+	} else {
+		fmt.Println(uint32ToIP(start))
+		fmt.Println(uint32ToIP(end))
+	}
 }
