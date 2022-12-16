@@ -46,6 +46,8 @@ func main() {
 	start := addr & mask
 	end := start + ^mask
 
+	fmt.Printf("Total IP addresses: %v\n", 1 << (32 - maskInt))
+
 	if *list {
 		for addr := start; addr <= end; addr++ {
 			fmt.Println(uint32ToIP(addr))
